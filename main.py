@@ -43,6 +43,12 @@ async def main():
         # check for top wall boundary
         if ball_location[1] - BALL_RADIUS <= 0:
             ball_speed[1] *= -1
+        #check from bottom wall boundary
+        if ball_location[1] + BALL_RADIUS >= SCREEN_DIMENSIONS[1]:
+            ball_speed[1] *= -1
+        #check from fight wall boundary    
+        if ball_location[0] + BALL_RADIUS >= SCREEN_DIMENSIONS[0]:
+            ball_speed[0] *= -1
 
         ball_location[0] += ball_speed[0]
         ball_location[1] += ball_speed[1]
