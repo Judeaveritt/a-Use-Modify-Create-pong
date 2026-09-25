@@ -26,6 +26,8 @@ async def main():
     left_paddle: pygame.Rect = pygame.Rect(LEFT_PADDLE_OFFSET,
                                         SCREEN_DIMENSIONS[1] // 2 - LEFT_PADDLE_DIMENSIONS[1] // 2,
                                         LEFT_PADDLE_DIMENSIONS[0], LEFT_PADDLE_DIMENSIONS[1])
+    
+    
 
 
     BG_COLOR: tuple = (20, 20, 50)
@@ -45,20 +47,29 @@ async def main():
 
         if pressed[pygame.K_w] and left_paddle.top >= OFFSET:
              left_paddle.top -= LEFT_PADDLE_SPEED
+
         if pressed[pygame.K_s] and left_paddle.bottom <= SCREEN_DIMENSIONS[1]-OFFSET:
             left_paddle.top += LEFT_PADDLE_SPEED
 
 
-        # update the ball
+        
         # check for top wall boundary
         if ball_location[1] - BALL_RADIUS <= 0:
             ball_speed[1] *= -1
+
         #check from bottom wall boundary
         if ball_location[1] + BALL_RADIUS >= SCREEN_DIMENSIONS[1]:
             ball_speed[1] *= -1
+
         #check from fight wall boundary    
         if ball_location[0] + BALL_RADIUS >= SCREEN_DIMENSIONS[0]:
             ball_speed[0] *= -1
+
+        #paddle collision 
+        if ball_location[0]-BALL_RADIUS <= left_paddle.right and \
+            ball_location[1]-BALL_RADIUS>= left_paddle.top and \
+            ball_location[1] + BALL_RADIUS <= left_paddle.bottom:
+            ball_speed[0]  *=-1
 
         ball_location[0] += ball_speed[0]
         ball_location[1] += ball_speed[1]
