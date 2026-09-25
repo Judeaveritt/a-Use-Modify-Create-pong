@@ -31,23 +31,53 @@ async def main():
     BG_COLOR: tuple = (20, 20, 50)
     
 
+    RIGHT_PADDLE_DIMENSIONS: tuple = (15, 100)
+    RIGHT_PADDLE_OFFSET: int = 755 # distance from left edge of screen
+    RIGHT_PADDLE_COLOR: tuple = (255, 255, 255)
+    RIGHT_PADDLE_SPEED: float = 8
+    OFFSET: float = 10
+    right_paddle: pygame.Rect = pygame.Rect(RIGHT_PADDLE_OFFSET,
+                                        SCREEN_DIMENSIONS[1] // 2 - RIGHT_PADDLE_DIMENSIONS[1] // 2,
+                                        RIGHT_PADDLE_DIMENSIONS[0], RIGHT_PADDLE_DIMENSIONS[1])
+
+
+
+
+    BG_COLOR: tuple = (20, 20, 50)
+   
+
+
     pygame.init()
+
 
     screen: pygame.Surface = pygame.display.set_mode(SCREEN_DIMENSIONS)
     pygame.display.set_caption(WINDOW_TITLE)
     clock: pygame.Clock = pygame.time.Clock()
 
+
     # MAIN GAME LOOP
     running: bool = True
     while running:
 
-        pressed: list[bool] = pygame.key.get_pressed()
 
+        pressed: list[bool] = pygame.key.get_pressed()
+       # left paddle keys
         if pressed[pygame.K_w] and left_paddle.top >= OFFSET:
              left_paddle.top -= LEFT_PADDLE_SPEED
 
+
         if pressed[pygame.K_s] and left_paddle.bottom <= SCREEN_DIMENSIONS[1]-OFFSET:
             left_paddle.top += LEFT_PADDLE_SPEED
+       
+        # right paddle keys
+       
+        if pressed[pygame.K_UP] and right_paddle.top >= OFFSET:
+                right_paddle.top -= RIGHT_PADDLE_SPEED
+
+
+        if pressed[pygame.K_DOWN] and right_paddle.bottom <= SCREEN_DIMENSIONS[1]-OFFSET:
+             right_paddle.top += RIGHT_PADDLE_SPEED
+
 
 
         
@@ -55,9 +85,14 @@ async def main():
         if check_ball_top_bottom_border(ball_location,BALL_RADIUS,SCREEN_DIMENSIONS):
             ball_speed[1] *= -1
 
-        # checl left paddle colition 
+        # check left paddle colition 
         if check_ball_paddle_collistion(ball_location,  BALL_RADIUS,left_paddle):
             ball_speed[0] *= -1
+
+        # check right paddle collition
+        if check_ball_paddle_collistion(ball_location,  BALL_RADIUS,right_paddle):
+            ball_speed[0] *= -1
+
 
 
         ball_location[0] += ball_speed[0]
@@ -65,7 +100,8 @@ async def main():
 
         # DRAW
         screen.fill(BG_COLOR) # background
-        pygame.draw.rect(screen, LEFT_PADDLE_COLOR, left_paddle) # paddle
+        pygame.draw.rect(screen, LEFT_PADDLE_COLOR, left_paddle) # paddle left 
+        pygame.draw.rect(screen, RIGHT_PADDLE_COLOR, right_paddle) # paddle right
         pygame.draw.circle(screen, BALL_COLOR, ball_location, BALL_RADIUS) # ball
 
         pygame.display.flip() # update screen
@@ -125,8 +161,8 @@ Returns
 
     #check right edge of ball hitting paddle
     
-    if ball_locations[0] + ball_radius <= paddle.right and\
-              ball_locations[0] +ball_radius >= paddle.left and \
+    if ball_locations[0] + ball_radius >= paddle.left and\
+              ball_locations[0] +ball_radius <= paddle.right and \
               ball_locations[1] + ball_radius >= paddle.top and \
               ball_locations[1] - ball_radius <= paddle.bottom:
             return True
